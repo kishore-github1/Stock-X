@@ -3,70 +3,72 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useState } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-// import { userState } from "../store/atom/user";
+import { userState} from "../store/userState";
+import { userNameAtom, userEmailAtom } from "../store/userAtoms";
 
 const Login = () => {
-  // const [user,setUser] = useRecoilState(userState);
-  const [email, setEmail] = useState(null);
+  const [user, setUser] = useRecoilState(userState);
+  // const [name, setName] = useRecoilState(userNameAtom);
+  const [email, setEmail] = useRecoilState(userEmailAtom);
+  // const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const navigate = useNavigate();
- 
+
   return (
-    <div >
-      <TextField
-        id="outlined-basic"
-        label="Email"
-        variant="outlined"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br />
-      <TextField
-        id="outlined-basic"
-        label="Password"
-        variant="outlined"
-        type="password"
-        onChange={(p) => setPassword(p.target.value)}
-      />
-      <br />
-      <Button
-        variant="contained"
-        onClick={async () => {
-          try{
-            const res = await axios.post(
-              "http://localhost:8000/api/user/login",
-              {
-                email: email,
-                password: password,
-              },
-              {
-                headers: {
-                  "Content-type": "application/json",
+    <div className="m-40 flex justify-center">
+      <div className="flex flex-col">
+        <TextField
+          id="outlined-basic"
+          label="Email"
+          variant="outlined"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <TextField
+          id="outlined-basic"
+          label="Password"
+          variant="outlined"
+          type="password"
+          onChange={(p) => setPassword(p.target.value)}
+        />
+        <br />
+        <button
+          
+          className="bg-indigo-500 text-white p-2 rounded-lg"
+          onClick={async () => {
+            try {
+              const res = await axios.post(
+                "http://localhost:8000/api/user/login",
+                {
+                  email: email,
+                  password: password,
                 },
-              }
-            );
-            const data = res.data;
+                {
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                }
+              );
+              const data = res.data;
 
-            localStorage.setItem("token",data.token);
-            
-            // setUser(true);
-            
-            // navigate("/create-post");
+              localStorage.setItem("token", data.token);
 
-        }
-      catch(err){
-        alert(err);
-      }
-    }}
-      >
-        Login
-      </Button>
+              setUser(true);
+              
 
-      <br/>
-      <Button onClick={()=>navigate("/signUp")}>
-        Signup
-      </Button>
+              navigate("/");
+            } catch (err) {
+              alert(err);
+            }
+          }}
+        >
+          Login
+        </button>
+
+        <br />
+      </div>
     </div>
   );
 };
