@@ -10,6 +10,7 @@ const porfolioRoute = express.Router();
 
 
 const ALPHA_VANTAGE_API_KEY =process.env.ALPHA_VANTAGE_API_KEY;
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
 
 porfolioRoute.route('/getStockCandleData').get(authenticateJwt, async (req, res) => {
     try {
@@ -142,7 +143,7 @@ porfolioRoute.route('/getPortfolioValue').get(authenticateJwt, async (req, res) 
             return res.status(404).json({ message: 'User not found' });
         }
 
-        let totalValue = 0;
+        let totalValue = 0, totalInvestment = 0;
         const portfolioData = [];
 
         for (const portfolio of user.portfolios) {
@@ -150,19 +151,19 @@ porfolioRoute.route('/getPortfolioValue').get(authenticateJwt, async (req, res) 
             const holdingsData = [];
 
             for (const holding of portfolio.holdings) {
-                const response = await axios.get(`https://www.alphavantage.co/query`, {
+                const response = await axios.get(`https://finnhub.io/api/v1/quote`, {
                     params: {
-                        function: 'GLOBAL_QUOTE',
                         symbol: holding.stockId,
-                        apikey: ALPHA_VANTAGE_API_KEY
+                        token: FINNHUB_API_KEY
                     }
                 });
 
-                const stockData = response.data['Global Quote'];
-                const currentPrice = parseFloat(stockData['05. price']);
+                const stockData = response.data;
+                const currentPrice = stockData.c;
                 const holdingValue = currentPrice * holding.quantity;
 
                 portfolioValue += holdingValue;
+                totalInvestment += (holding.averageBuyPrice * holding.quantity);
                 holdingsData.push({
                     stockId: holding.stockId,
                     quantity: holding.quantity,
@@ -183,6 +184,7 @@ porfolioRoute.route('/getPortfolioValue').get(authenticateJwt, async (req, res) 
 
         res.status(200).json({
             totalValue,
+            totalInvestment,
             portfolios: portfolioData
         });
 

@@ -6,6 +6,7 @@ import { userEmailAtom } from "../store/userAtoms";
 const Dashboard = () => {
   const [email, setEmail] = useRecoilState(userEmailAtom);
   const [portfolioData, setPortfolioData] = useState(null);
+  const [color, setColor] = useState("white");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,25 +33,59 @@ const Dashboard = () => {
     fetchData();
   }, [email]);
 
+  useEffect(() => {
+    if (portfolioData != null) {
+      if (portfolioData.totalValue - portfolioData.totalInvestment > 0) {
+        setColor("bg-green-400");
+      } else if (portfolioData.totalValue - portfolioData.totalInvestment < 0) {
+        setColor("bg-red-400");
+      }
+      else {
+        setColor("bg-white"); 
+      }
+    }
+    
+  }, [portfolioData]);
+
+  
   return (
     <div>
-      <div className="flex justify-center border-2 border-indigo-500 py-5 w-full h-[200px] box-content">
-        <div className="border-5 border-black">
-          Total Portfolio Value:{" "}
-          {portfolioData ? portfolioData.totalValue : "Loading..."}
+      <div
+        className={`flex ${color} justify-center items-center w-full py-5  h-[200px] `}
+      >
+        <div className="flex justify-center font-bold text-xl ">
+          {portfolioData ? (
+            <div>
+              <div>Total Portfolio Value:  ${portfolioData.totalValue}</div>
+
+              <div>Total Investment:  ${portfolioData.totalInvestment}</div>
+              <div>
+                Total Profit/Loss: $
+                {portfolioData.totalValue - portfolioData.totalInvestment}
+              </div>
+            </div>
+          ) : (
+            "Loading..."
+          )}
         </div>
       </div>
       <div className="flex justify-center">
         <div>
-          <h2>Individual stocks</h2>
+          <h2 className="flex justify-center font-medium m">Stocks</h2>
           {portfolioData &&
             portfolioData.portfolios[0].holdings.map((holding, index) => (
-              <div key={index} className="border-2 border-gray-300 p-2 my-2">
-                <p>Stock ID: {holding.stockId}</p>
+              <div
+                key={index}
+                className="flex space-x-4 border-2 border-gray-300 p-2 my-2"
+              >
+                <p>Stock Symbol: {holding.stockId}</p>
                 <p>Quantity: {holding.quantity}</p>
                 <p>Average Buy Price: {holding.averageBuyPrice}</p>
                 <p>Current Price: {holding.currentPrice}</p>
                 <p>Holding Value: {holding.holdingValue}</p>
+                <button className="bg-rose-600 text-white p-2 rounded-md w-auto">
+                  Sell
+                </button>
               </div>
             ))}
         </div>
