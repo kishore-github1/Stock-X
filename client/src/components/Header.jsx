@@ -6,6 +6,7 @@ import UserIcon from "../assets/user.png";
 import { useRecoilState } from "recoil";
 import { userState } from "../store/userState";
 import axios from "axios";
+import DropdownMenu from "./DropdownMenu";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -13,8 +14,13 @@ const Header = () => {
   const [symbol, setSymbol] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
+  const [drop,setDrop] = useState(false);
 
   const searchContainerRef = useRef(null);
+
+  const handleDropdown = () => {
+    setDrop(!drop);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,7 +78,7 @@ const Header = () => {
         </div>
 
         {user && (
-          <div className=" bg-indigo-500 text-white py-2 px-4 rounded-xl">
+          <div className="bg-indigo-500 text-white py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:scale-105">
             <Link to="dashboard"> Dashboard </Link>
           </div>
         )}
@@ -90,7 +96,7 @@ const Header = () => {
               }}
             />
             <button
-              className="rounded-lg bg-indigo-500 hover:bg-white text-white hover:text-indigo-500 border-2 border-indigo-500 font-bold py-2 px-4 rounded"
+              className="rounded-lg bg-indigo-500 hover:bg-white text-white hover:text-indigo-500 border-2 border-indigo-500 font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
               onClick={handleSearch}
             >
               Search
@@ -118,7 +124,7 @@ const Header = () => {
                   </div>
                   <Link
                     to={`/stock/${symbol}`}
-                    className="text-white bg-indigo-500 px-4 py-2 rounded-lg shadow-md hover:bg-indigo-600"
+                    className="text-white bg-indigo-500 px-4 py-2 rounded-lg shadow-md hover:bg-indigo-600 transition duration-300 ease-in-out transform hover:scale-105"
                   >
                     Detailed view
                   </Link>
@@ -129,20 +135,21 @@ const Header = () => {
         </div>
         {!user && (
           <div className="flex mr-5 space-x-5 ">
-            <div className=" bg-indigo-500 text-white py-2 px-4 rounded-xl">
+            <div className="bg-indigo-500 text-white py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:scale-105">
               <Link to="/signUp">SignUp</Link>
             </div>
-            <div className=" bg-indigo-500 text-white py-2 px-4 rounded-xl">
+            <div className="bg-indigo-500 text-white py-2 px-4 rounded-xl transition duration-300 ease-in-out transform hover:scale-105">
               <Link to="/login">Login</Link>
             </div>
           </div>
         )}
 
         {user && (
-          <div className="text-white rounded-xl ">
-            <img src={UserIcon} alt="User Icon" className="size-10 ml-32" />
+          <div className="text-white rounded-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">
+            <img src={UserIcon} alt="User Icon" className="size-10 ml-32" onClick={handleDropdown}/>
           </div>
         )}
+        {drop && (<DropdownMenu/>)} 
       </div>
     </div>
   );
