@@ -194,6 +194,73 @@ porfolioRoute.route('/getPortfolioValue').get(authenticateJwt, async (req, res) 
     }
 });
 
+//route to sell the stocks
+porfolioRoute.route('/sell').post(authenticateJwt, async (req, res) => {
+    try {
+        const { email, stockId, quantity, avgBuyPrice } = req.body;
+
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the user's portfolio
+        const portfolio = await Portfolio.findOne({ userId: user._id, name: 'default' });
+        if (!portfolio) {
+            
+            return res.status(404).json({ message: 'Portfolio not found' });
+        }
+
+        // Find the holding in the portfolio
+        const holdingIndex = portfolio.holdings.findIndex(holding => holding.stockId === stockId);
+        if (holdingIndex === -1) {
+            return res.status(400).json({ message: 'Stock not found in portfolio' });
+        }
+
+        const holding = portfolio.holdings[holdingIndex];
+
+        // Check if the user has enough quantity to sell
+        if (holding.quantity < quantity) {
+            return res.status(400).json({ message: 'Not enough quantity to sell' });
+        }
+
+        // Create a new transaction
+        const transaction = new Transaction({
+            portfolioId: portfolio._id,
+            stockId: stockId,
+            type: 'SELL',
+            quantity: quantity,
+            price: avgBuyPrice
+        });
+
+        // Save the transaction
+        await transaction.save();
+
+        // Add transaction to portfolio's transactions
+        portfolio.transactions.push(transaction._id);
+
+        // Update the holding
+        holding.quantity -= quantity;
+        if (holding.quantity === 0) {
+            portfolio.holdings.splice(holdingIndex, 1);
+        }
+
+        // Save the portfolio
+        await portfolio.save();
+
+        res.status(200).json({
+            message: 'Stock sold from portfolio and transaction recorded',
+            portfolio,
+            transaction
+        });
+
+    } catch (error) {
+        console.error('Error selling stock from user portfolio:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 
 

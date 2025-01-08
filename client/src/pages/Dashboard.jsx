@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [email, setEmail] = useRecoilState(userEmailAtom);
   const [portfolioData, setPortfolioData] = useState(null);
   const [color, setColor] = useState("white");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,15 +41,16 @@ const Dashboard = () => {
         setColor("bg-green-400");
       } else if (portfolioData.totalValue - portfolioData.totalInvestment < 0) {
         setColor("bg-red-400");
-      }
-      else {
-        setColor("bg-white"); 
+      } else {
+        setColor("bg-white");
       }
     }
-    
   }, [portfolioData]);
 
-  
+  const handleSell = (symbol) => {
+    navigate(`/trade/${symbol}`);
+  };
+
   return (
     <div>
       <div
@@ -56,9 +59,9 @@ const Dashboard = () => {
         <div className="flex justify-center font-bold text-xl ">
           {portfolioData ? (
             <div>
-              <div>Total Portfolio Value:  ${portfolioData.totalValue}</div>
+              <div>Total Portfolio Value: ${portfolioData.totalValue}</div>
 
-              <div>Total Investment:  ${portfolioData.totalInvestment}</div>
+              <div>Total Investment: ${portfolioData.totalInvestment}</div>
               <div>
                 Total Profit/Loss: $
                 {portfolioData.totalValue - portfolioData.totalInvestment}
@@ -83,7 +86,10 @@ const Dashboard = () => {
                 <p>Average Buy Price: {holding.averageBuyPrice}</p>
                 <p>Current Price: {holding.currentPrice}</p>
                 <p>Holding Value: {holding.holdingValue}</p>
-                <button className="bg-rose-600 text-white p-2 rounded-md w-auto">
+                <button
+                  className="bg-rose-600 text-white p-2 rounded-md w-auto"
+                  onClick={() => handleSell(holding.stockId)}
+                >
                   Sell
                 </button>
               </div>

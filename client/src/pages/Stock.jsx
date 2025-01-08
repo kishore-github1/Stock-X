@@ -8,13 +8,12 @@ import TextField from "@mui/material/TextField";
 import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
 import { useNavigate } from "react-router-dom";
+import { userState } from "../store/userState.js";
 
 const Stock = () => {
   const { symbol } = useParams();
   const [chartData, setChartData] = useState({});
-  const [quantity, setQuantity] = useState(0);
-  const [buyAt, setBuyAt] = useState(0);
-  const [email, setEmail] = useRecoilState(userEmailAtom);
+  const [user, setUser] = useRecoilState(userState);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,29 +45,12 @@ const Stock = () => {
     fetchData();
   }, [symbol]);
 
-  const handleBuy = async () => {
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/portfolio/buy",
-        {
-          email : email,
-          stockId: symbol,
-          quantity: quantity,
-          avgBuyPrice: buyAt,
-        },
-        {
-          headers: {
-            'Content-Type' : 'application/json',
-            "Authorization": "Bearer " + localStorage.getItem("token")
-          },
-        }
-      );
-      const data = res.data;
-      console.log(data);
-      navigate("/dashboard");
-    } catch (err) {
-      alert(err);
+  const handleBuy = () => {
+    if(!user){
+      alert('Please Login');
+      return;
     }
+    navigate("/trade/" + symbol);
   };
 
   return (
@@ -88,24 +70,12 @@ const Stock = () => {
           <div></div>
 
           <div className="flex justify-center space-x-4">
-            <TextField
-              id="outlined-basic"
-              label="Quantity"
-              variant="outlined"
-              onChange={(e) => setQuantity(e.target.value)}
-            />
-            <TextField
-              id="outlined-basic"
-              label="Buy At"
-              variant="outlined"
-              onChange={(e) => setBuyAt(e.target.value)}
-            />
-
+            
             <button
-              className="bg-indigo-500 text-white p-4 w-full rounded-md"
+              className="bg-green-700 text-white p-4 w-full rounded-md"
               onClick={handleBuy}
             >
-              Buy at market price
+              Buy
             </button>
           </div>
         </div>

@@ -15,6 +15,7 @@ import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
 import Stock from "./pages/Stock.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Trade from "./pages/Trade.jsx";
 import SpinningWheel from "./pages/SpinningWheel.jsx";
 import UserIcon from "./assets/user.png";
 import Logo from "./assets/logo.webp";
@@ -161,6 +162,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/stock/:symbol" element={<Stock />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="trade/:symbol" element={<Trade />} />
         <Route path="signUp" element={<SignUp />} />
         <Route path="login" element={<Login />} />
         <Route path="wheel" element={<SpinningWheel />} />
