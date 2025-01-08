@@ -54,6 +54,17 @@ porfolioRoute.route('/buy').post(authenticateJwt, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const totalCost = quantity * avgBuyPrice;
+
+        // Check if user has enough money in wallet
+        if (user.wallet < totalCost) {
+            return res.status(400).json({ message: 'Not enough money in wallet' });
+        }
+
+        // Deduct money from wallet
+        user.wallet -= totalCost;
+        await user.save();
+
         // Check if a portfolio with the same name already exists for this user
         let portfolio = await Portfolio.findOne({ 
             userId: user._id, 
@@ -225,6 +236,13 @@ porfolioRoute.route('/sell').post(authenticateJwt, async (req, res) => {
             return res.status(400).json({ message: 'Not enough quantity to sell' });
         }
 
+        // Calculate the total sell value
+        const totalSellValue = quantity * avgBuyPrice;
+
+        // Add money to wallet
+        user.wallet += totalSellValue;
+        await user.save();
+
         // Create a new transaction
         const transaction = new Transaction({
             portfolioId: portfolio._id,
@@ -261,7 +279,52 @@ porfolioRoute.route('/sell').post(authenticateJwt, async (req, res) => {
     }
 });
 
+porfolioRoute.route('/getWalletMoney').get(authenticateJwt, async (req, res) => {
+    try {
+        const { email } = req.query;
 
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
 
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ wallet: user.wallet });
+    } catch (error) {
+        console.error('Error fetching wallet money:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+porfolioRoute.route('/addWalletMoney').post(authenticateJwt, async (req, res) => {
+    try {
+        const { email, amount } = req.body;
+
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Add money to user's wallet
+        user.wallet = (user.wallet || 0) + Number(amount);
+
+        // Save the user
+        await user.save();
+
+        res.status(200).json({
+            message: 'Money added to wallet successfully',
+            wallet: user.wallet
+        });
+
+    } catch (error) {
+        console.error('Error adding money to wallet:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 export default porfolioRoute;

@@ -8,6 +8,7 @@ const Dashboard = () => {
   const [email, setEmail] = useRecoilState(userEmailAtom);
   const [portfolioData, setPortfolioData] = useState(null);
   const [color, setColor] = useState("white");
+  const [walletAmount, setWalletAmount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +37,31 @@ const Dashboard = () => {
   }, [email]);
 
   useEffect(() => {
+    const fetchWalletAmount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          "http://localhost:8000/api/portfolio/getWalletMoney",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            params: {
+              email: email,
+            },
+          }
+        );
+        setWalletAmount(res.data.wallet);
+      } catch (error) {
+        console.error("Error fetching wallet amount:", error);
+      }
+    };
+
+    fetchWalletAmount();
+  }, [email]);
+
+  useEffect(() => {
     if (portfolioData != null) {
       if (portfolioData.totalValue - portfolioData.totalInvestment > 0) {
         setColor("bg-green-400");
@@ -49,6 +75,29 @@ const Dashboard = () => {
 
   const handleSell = (symbol) => {
     navigate(`/trade/${symbol}`);
+  };
+
+  const handleAddMoney = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/portfolio/addWalletMoney",
+        {
+          email: email,
+          amount: walletAmount,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
+      const data = res.data;
+      alert(`Money added to wallet: $${data.wallet}`);
+      setWalletAmount(data.wallet);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
@@ -94,6 +143,24 @@ const Dashboard = () => {
                 </button>
               </div>
             ))}
+        </div>
+      </div>
+      <div className="flex justify-center mt-10">
+        <div className="flex flex-col items-center">
+          <h2 className="font-medium">Wallet Amount: ${walletAmount}</h2>
+          <input
+            type="number"
+            className="border-2 border-gray-300 p-2 my-2"
+            placeholder="Enter amount"
+            value={walletAmount}
+            onChange={(e) => setWalletAmount(e.target.value)}
+          />
+          <button
+            className="bg-blue-600 text-white p-2 rounded-md w-auto"
+            onClick={handleAddMoney}
+          >
+            Add Money
+          </button>
         </div>
       </div>
     </div>
