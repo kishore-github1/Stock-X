@@ -148,19 +148,8 @@ const Dashboard = () => {
       <div className="flex justify-center mt-10">
         <div className="flex flex-col items-center">
           <h2 className="font-medium">Wallet Amount: ${walletAmount}</h2>
-          <input
-            type="number"
-            className="border-2 border-gray-300 p-2 my-2"
-            placeholder="Enter amount"
-            value={walletAmount}
-            onChange={(e) => setWalletAmount(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 text-white p-2 rounded-md w-auto"
-            onClick={handleAddMoney}
-          >
-            Add Money
-          </button>
+         
+           
         </div>
       </div>
     </div>
