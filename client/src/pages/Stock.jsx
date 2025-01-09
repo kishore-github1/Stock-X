@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
-import fake from "./fake.js";
+
 import TextField from "@mui/material/TextField";
 import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
@@ -21,22 +21,34 @@ const Stock = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const data = fake;
-        const chartData = {
-          labels: Object.keys(data).reverse(),
+        const response = await axios.get("http://localhost:8000/api/portfolio/getStockCandleData", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          params:{
+            symbol : symbol,
+          }
+        });
+        console.log(response.data);
+
+        const data = response.data;
+
+        const labels = data.map(item => new Date(item.t).toLocaleDateString());
+        const prices = data.map(item => item.c);
+
+        setChartData({
+          labels: labels,
           datasets: [
             {
-              label: `${symbol} Stock Price`,
-              data: Object.values(data)
-                .map((day) => day["4. close"])
-                .reverse(),
-              borderColor: "rgba(75, 192, 192, 1)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              fill: true,
+              label: `${symbol} Closing Prices`,
+              data: prices,
+              borderColor: "rgba(75,192,192,1)",
+              backgroundColor: "rgba(75,192,192,0.2)",
             },
           ],
-        };
-        setChartData(chartData);
+        });
+
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
