@@ -43,9 +43,9 @@ const SpinningWheel = () => {
             >
               <div
                 className="w-full h-full flex items-center justify-center"
-                style={{ backgroundColor: "white" }}
+                style={{ backgroundColor: segment.color }}
               >
-                  <span className="absolute z-50 border-2 border-black text-3xl translate-y-100 text-black font-bold transform rotate-deg] translate-x-100">
+                  <span className="  ">
                     {segment.text}
                   </span>
               </div>

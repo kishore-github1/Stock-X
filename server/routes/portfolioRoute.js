@@ -350,4 +350,37 @@ porfolioRoute
     }
   });
 
+porfolioRoute.route("/getTransactions").get(authenticateJwt, async (req, res) => {
+    try {
+      const { email } = req.query;
+
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Find user by email
+      const user = await User.findOne({ email }).populate({
+        path: "portfolios",
+        populate: {
+          path: "transactions",
+          model: "Transaction",
+        },
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const transactions = user.portfolios.reduce((acc, portfolio) => {
+        return acc.concat(portfolio.transactions);
+      }, []);
+
+      res.status(200).json({ transactions });
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      res.status(500).json({ error: error.message });
+    }
+
+});
+
 export default porfolioRoute;
