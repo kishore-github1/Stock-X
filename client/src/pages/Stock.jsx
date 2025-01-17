@@ -13,6 +13,7 @@ import { userState } from "../store/userState.js";
 const Stock = () => {
   const { symbol } = useParams();
   const [chartData, setChartData] = useState({});
+  const [companyInfo, setCompanyInfo] = useState({});
   const [user, setUser] = useRecoilState(userState);
   const navigate = useNavigate();
 
@@ -57,6 +58,30 @@ const Stock = () => {
     fetchData();
   }, [symbol]);
 
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get("http://localhost:8000/api/portfolio/getCompanyInfo", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            symbol: symbol,
+          },
+        });
+
+        setCompanyInfo(response.data);
+      } catch (error) {
+        console.error("Error fetching company info:", error);
+      }
+    };
+
+    fetchCompanyInfo();
+  }, [symbol]);
+
   const handleBuy = () => {
     if(!user){
       alert('Please Login');
@@ -92,8 +117,19 @@ const Stock = () => {
           </div>
         </div>
 
-        <div>
-          <h2 className="font-bold">Company Information</h2>
+        <div className="m-5">
+          <h2 className="flex justify-center font-bold">Company Information</h2>
+          <div className="flex justify-center">
+          {companyInfo && (
+            <div className="p-4">
+              <p><strong>Name:</strong> {companyInfo.name}</p>
+              <p><strong>Industry:</strong> {companyInfo.finnhubIndustry}</p>
+              <p><strong>Market Capitalization:</strong> {companyInfo.marketCapitalization}</p>
+              <p><strong>Shares Outstanding:</strong> {companyInfo.shareOutstanding}</p>
+              <p><strong>Website:</strong> <a href={companyInfo.weburl} target="_blank" rel="noopener noreferrer">{companyInfo.weburl}</a></p>
+            </div>
+          )}
+          </div>
         </div>
       </div>
       <div className="hidden md:block border-2 border-indigo-400">Side box</div>
