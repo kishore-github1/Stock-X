@@ -28,7 +28,14 @@ const DropdownMenu = () => {
           <li>
             <button onClick={handleProfileClick}>Profile</button>
           </li>
-          <li>Log Out</li>
+          <li>
+            <button onClick={()=>{
+              localStorage.removeItem("token");
+              setEmail(null);
+              setName(null);
+              navigate("/login");
+            }}>Log Out</button>
+          </li>
         </ul>
       </div>
       <DialogBox isOpen={isDialogOpen} onClose={handleCloseDialog}>
