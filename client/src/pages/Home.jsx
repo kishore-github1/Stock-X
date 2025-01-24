@@ -1,3 +1,4 @@
+import Dialog from '../components/DialogBox';
 import React from 'react'
 
 const Home = () => {
@@ -7,6 +8,7 @@ const Home = () => {
                 <div className="border-5 border-black">
                     Welcome to CapX
                 </div>
+                <Dialog />
             </div>
             <div>
                 Portfolios 

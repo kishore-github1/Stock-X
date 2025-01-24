@@ -10,7 +10,7 @@ import { userNameAtom, userEmailAtom } from "../store/userAtoms";
 
 const Login = () => {
   const [user, setUser] = useRecoilState(userState);
-  // const [name, setName] = useRecoilState(userNameAtom);
+  const [name, setName] = useRecoilState(userNameAtom);
   const [email, setEmail] = useRecoilState(userEmailAtom);
   // const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -57,6 +57,7 @@ const Login = () => {
 
               setUser(true);
               
+              setName(data.name);
 
               navigate("/");
             } catch (err) {
