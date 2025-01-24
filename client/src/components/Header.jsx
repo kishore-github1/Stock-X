@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.png";
 import { Audio } from "react-loader-spinner";
 import UserIcon from "../assets/user.png";
 import { useRecoilState } from "recoil";
@@ -71,9 +71,9 @@ const Header = () => {
   return (
     <div>
       <div className="flex flex-row items-center space-x-40">
-        <div className="ml-3 p-4 rounded-xl">
+        <div className=" ml-4 mt-2 rounded-xl">
           <Link to="/">
-            <img src={logo} alt="" />
+            <img src={logo} alt=""  className="w-32 h-20 object-cover"/>
           </Link>
         </div>
 
