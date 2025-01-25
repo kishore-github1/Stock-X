@@ -6,6 +6,7 @@ import { userEmailAtom } from "../store/userAtoms.js";
 import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import config from "../config";
 
 
 const Trade = () => {

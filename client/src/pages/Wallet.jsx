@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
 import SpinningWheel from "../pages/SpinningWheel";
+import config from "../config";
 
 const Wallet = () => {
   const [walletAmount, setWalletAmount] = useState(0);

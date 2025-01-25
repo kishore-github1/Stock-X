@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from "../config";
 
 const SignUp = () => {
   const [name, setName] = useState(null);
