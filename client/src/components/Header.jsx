@@ -17,6 +17,7 @@ const Header = () => {
   const [drop,setDrop] = useState(false);
 
   const searchContainerRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const handleDropdown = () => {
     setDrop(!drop);
@@ -29,6 +30,9 @@ const Header = () => {
         !searchContainerRef.current.contains(event.target)
       ) {
         setSearchResults(null);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDrop(false);
       }
     };
 
@@ -149,7 +153,7 @@ const Header = () => {
             <img src={UserIcon} alt="User Icon" className="size-10 ml-32" onClick={handleDropdown}/>
           </div>
         )}
-        {drop && (<DropdownMenu/>)} 
+        {drop && (<div ref={dropdownRef}><DropdownMenu/></div>)} 
       </div>
     </div>
   );

@@ -5,11 +5,11 @@ import { authenticateJwt } from "../middleware/auth.js";
 import Portfolio from "../mongodb/models/portfolio.js";
 import axios from "axios";
 
-const porfolioRoute = express.Router();
+const portfolioRoute = express.Router();
 
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
-const POLYGON_API_KEY = process.env.POLYGON_API_KEY;
+const POLYGON_API_KEY = process.env.POLYGON_API_KEY;``
 
 function formatDate(date) {
   return date.toISOString().split("T")[0]; // Format as 'YYYY-MM-DD'
@@ -21,7 +21,7 @@ thirtyDaysAgo.setDate(today.getDate() - 30);
 const from = formatDate(thirtyDaysAgo);
 const to = formatDate(today);
 
-porfolioRoute
+portfolioRoute
   .route("/getStockCandleData")
   .get(authenticateJwt, async (req, res) => {
     try {
@@ -50,7 +50,7 @@ porfolioRoute
           .status(400)
           .json({ message: "Error fetching data from Polygon.io" });
       }
-      console.log(data);
+      // console.log(data);
       res.status(200).json(data);
     } catch (error) {
       console.error("Error fetching stock chart data:", error);
@@ -58,7 +58,7 @@ porfolioRoute
     }
   });
 
-porfolioRoute.route("/buy").post(authenticateJwt, async (req, res) => {
+portfolioRoute.route("/buy").post(authenticateJwt, async (req, res) => {
   try {
     const { email, stockId, quantity, avgBuyPrice } = req.body;
     console.log(email);
@@ -155,7 +155,7 @@ porfolioRoute.route("/buy").post(authenticateJwt, async (req, res) => {
   }
 });
 //route to sell the stocks
-porfolioRoute.route("/sell").post(authenticateJwt, async (req, res) => {
+portfolioRoute.route("/sell").post(authenticateJwt, async (req, res) => {
   try {
     const { email, stockId, quantity, avgBuyPrice } = req.body;
 
@@ -231,7 +231,7 @@ porfolioRoute.route("/sell").post(authenticateJwt, async (req, res) => {
   }
 });
 
-porfolioRoute
+portfolioRoute
   .route("/getPortfolioValue")
   .get(authenticateJwt, async (req, res) => {
     try {
@@ -300,7 +300,7 @@ porfolioRoute
 
 
 
-porfolioRoute
+portfolioRoute
   .route("/getWalletMoney")
   .get(authenticateJwt, async (req, res) => {
     try {
@@ -323,7 +323,7 @@ porfolioRoute
     }
   });
 
-porfolioRoute
+portfolioRoute
   .route("/addWalletMoney")
   .post(authenticateJwt, async (req, res) => {
     try {
@@ -351,7 +351,7 @@ porfolioRoute
     }
   });
 
-porfolioRoute.route("/getTransactions").get(authenticateJwt, async (req, res) => {
+portfolioRoute.route("/getTransactions").get(authenticateJwt, async (req, res) => {
     try {
       const { email } = req.query;
 
@@ -384,7 +384,7 @@ porfolioRoute.route("/getTransactions").get(authenticateJwt, async (req, res) =>
 
 });
 
-porfolioRoute.route("/getCompanyInfo").get(authenticateJwt, async (req, res) => {
+portfolioRoute.route("/getCompanyInfo").get(authenticateJwt, async (req, res) => {
     try{
         const { symbol } = req.query;
 
@@ -404,7 +404,7 @@ porfolioRoute.route("/getCompanyInfo").get(authenticateJwt, async (req, res) => 
         if (!companyInfo) {
           return res.status(404).json({ message: "Company info not found" });
         }
-        console.log(companyInfo);
+        // console.log(companyInfo);
 
         res.status(200).json(companyInfo);
     }
@@ -414,4 +414,35 @@ porfolioRoute.route("/getCompanyInfo").get(authenticateJwt, async (req, res) => 
 
 });
 
-export default porfolioRoute;
+portfolioRoute.route("/getNews").get(authenticateJwt, async (req, res) => {
+  try {
+    const { symbol } = req.query;
+
+    if (!symbol) {
+      return res.status(400).json({ message: "Symbol is required" });
+    }
+
+    const response = await axios.get(`https://www.alphavantage.co/query`, {
+      params: {
+        function: "NEWS_SENTIMENT",
+        tickers: symbol,
+        apikey: ALPHA_VANTAGE_API_KEY,
+      },
+    });
+
+    const newsData = response.data;
+    console.log(newsData);
+
+    if (!newsData) {
+      return res.status(404).json({ message: "News not found" });
+    }
+
+    res.status(200).json(newsData);
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    res.status(500).json({ error: error.message });
+  }
+
+});
+
+export default portfolioRoute;

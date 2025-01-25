@@ -24,7 +24,7 @@ const Home = () => {
     <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-500 to-purple-500">
       {userName ? (
         <div className="flex flex-col items-center w-2/3">
-          <div className="flex justify-center items-center m-4">
+          <div className="flex justify-center items-center -mt-20">
             {text.split("").map((char, index) => (
               <motion.span
                 key={index}
