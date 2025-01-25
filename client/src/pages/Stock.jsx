@@ -9,6 +9,7 @@ import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
 import { useNavigate } from "react-router-dom";
 import { userState } from "../store/userState.js";
+import config from "../config";
 
 const Stock = () => {
   const { symbol } = useParams();
@@ -23,7 +24,7 @@ const Stock = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get("http://localhost:8000/api/portfolio/getStockCandleData", {
+        const response = await axios.get(`${config.baseURL}/api/portfolio/getStockCandleData`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -64,7 +65,7 @@ const Stock = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get("http://localhost:8000/api/portfolio/getCompanyInfo", {
+        const response = await axios.get(`${config.baseURL}/api/portfolio/getCompanyInfo`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -89,7 +90,7 @@ const Stock = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get("http://localhost:8000/api/portfolio/getNews", {
+        const response = await axios.get(`${config.baseURL}/api/portfolio/getNews`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

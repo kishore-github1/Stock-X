@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "../store/userState";
 import axios from "axios";
 import DropdownMenu from "./DropdownMenu";
+import config from "../config";
 
 const Header = () => {
   const [search, setSearch] = useState("");
@@ -43,6 +44,20 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleEnterPress = (event) => {
+      if (event.key === "Enter") {
+        handleSearch();
+      }
+    };
+
+    document.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [search]);
+
   const handleSearch = async () => {
     if (search == "") {
       alert("Please enter a valid search query");
@@ -60,7 +75,7 @@ const Header = () => {
       setSymbol(res.data.result[0].symbol);
 
       const response = await axios.get(
-        `http://localhost:8000/${res.data.result[0].symbol}`
+        `${config.baseURL}/${res.data.result[0].symbol}`
       );
       const data = response.data;
       console.log(data);

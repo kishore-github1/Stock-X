@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState} from "../store/userState";
 import { userNameAtom, userEmailAtom } from "../store/userAtoms";
+import config from "../config";
 
 const Login = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -40,7 +41,7 @@ const Login = () => {
           onClick={async () => {
             try {
               const res = await axios.post(
-                "http://localhost:8000/api/user/login",
+                `${config.baseURL}/api/user/login`,
                 {
                   email: email,
                   password: password,

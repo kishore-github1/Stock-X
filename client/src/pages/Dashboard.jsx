@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { userEmailAtom } from "../store/userAtoms";
 import { useNavigate } from "react-router-dom";
+import config from "../config";
 
 const Dashboard = () => {
   const [email, setEmail] = useRecoilState(userEmailAtom);
@@ -16,7 +17,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/portfolio/getPortfolioValue",
+          `${config.baseURL}/api/portfolio/getPortfolioValue`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -41,7 +42,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/portfolio/getWalletMoney",
+          `${config.baseURL}/api/portfolio/getWalletMoney`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -80,7 +81,7 @@ const Dashboard = () => {
   const handleAddMoney = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/portfolio/addWalletMoney",
+        `${config.baseURL}/api/portfolio/addWalletMoney`,
         {
           email: email,
           amount: walletAmount,
