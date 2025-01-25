@@ -1,9 +1,7 @@
-Here is a sample `README.md` for your repository:
 
-```markdown
+
 # Stock-X
 
-🔴 Live Website
 
 ## Description
 Stock-X is a web application designed to provide real-time stock market data and insights. The platform offers a comprehensive view of various stocks, allowing users to make informed investment decisions.
@@ -19,7 +17,7 @@ Stock-X is a web application designed to provide real-time stock market data and
 1. Clone the repository:
    ```bash
    git clone https://github.com/kishore-github1/Stock-X.git
-   ```
+   
 2. Navigate to the project directory:
    ```bash
    cd Stock-X
