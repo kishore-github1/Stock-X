@@ -77,6 +77,7 @@ const Stock = () => {
         setCompanyInfo(response.data);
       } catch (error) {
         console.error("Error fetching company info:", error);
+        setCompanyInfo(null);
       }
     };
 
@@ -106,6 +107,7 @@ const Stock = () => {
         setNews(newsData);
       } catch (error) {
         console.error("Error fetching news:", error);
+        setNews([]);
       }
     };
 
@@ -146,7 +148,7 @@ const Stock = () => {
         <div>
           <h2 className="text-xl font-bold  mb-5">Company Information</h2>
           <div className="bg-white p-5 rounded-lg shadow-lg">
-            {companyInfo && (
+            {companyInfo ? (
               <div>
                 <p className="mb-2"><strong>Name:</strong> {companyInfo.name}</p>
                 <p className="mb-2"><strong>Industry:</strong> {companyInfo.finnhubIndustry}</p>
@@ -154,6 +156,8 @@ const Stock = () => {
                 <p className="mb-2"><strong>Shares Outstanding:</strong> {companyInfo.shareOutstanding}</p>
                 <p className="mb-2"><strong>Website:</strong> <a href={companyInfo.weburl} target="_blank" rel="noopener noreferrer" className="text-blue-500">{companyInfo.weburl}</a></p>
               </div>
+            ) : (
+              <p>Company information not available</p>
             )}
           </div>
         </div>
@@ -161,13 +165,17 @@ const Stock = () => {
       <div className="hidden md:block md:w-1/4 border-2 border-indigo-400 rounded-lg p-5 shadow-lg">
         <h3 className="text-lg font-semibold mb-3">Related News</h3>
         <ul className="list-disc pl-5">
-          {news.map((article, index) => (
-            <li key={index} className="mb-2">
-              <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                {article.headline}
-              </a>
-            </li>
-          ))}
+          {news.length > 0 ? (
+            news.map((article, index) => (
+              <li key={index} className="mb-2">
+                <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                  {article.headline}
+                </a>
+              </li>
+            ))
+          ) : (
+            <p>News not available</p>
+          )}
         </ul>
       </div>
     </div>
