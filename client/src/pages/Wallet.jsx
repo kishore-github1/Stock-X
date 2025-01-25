@@ -15,7 +15,7 @@ const Wallet = () => {
     const fetchWalletAmount = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/portfolio/getWalletMoney",
+          `${config.baseURL}/api/portfolio/getWalletMoney`,
           {
             params: { email: email },
             headers: {
@@ -40,7 +40,7 @@ const Wallet = () => {
     }
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/portfolio/addWalletMoney",
+        `${config.baseURL}/api/portfolio/addWalletMoney`,
         {
           email: email,
           amount: addAmount,
@@ -64,7 +64,7 @@ const Wallet = () => {
     const fetchTransactions = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8000/api/portfolio/getTransactions",
+          `${config.baseURL}/api/portfolio/getTransactions`,
           {
             params: { email: email },
             headers: {

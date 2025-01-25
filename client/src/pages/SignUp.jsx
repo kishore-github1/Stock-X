@@ -40,7 +40,7 @@ const SignUp = () => {
           className="bg-indigo-500 text-white p-2 rounded-lg"
           onClick={async () => {
             const res = await axios.post(
-              "http://localhost:8000/api/user/signUp",
+              `${config.baseURL}/api/user/signUp`,
               {
                 name: name,
                 email: email,

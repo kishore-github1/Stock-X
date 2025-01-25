@@ -18,7 +18,7 @@ const Trade = () => {
   const handleBuy = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/portfolio/buy",
+        `${config.baseURL}/api/portfolio/buy`,
         {
           email: email,
           stockId: symbol,
@@ -43,7 +43,7 @@ const Trade = () => {
   const handleSell = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/portfolio/sell",
+        `${config.baseURL}/api/portfolio/sell`,
         {
           email: email,
           stockId: symbol,
